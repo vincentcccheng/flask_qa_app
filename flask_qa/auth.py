@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required
 from .models import User
-from . import db
+from . import db, mysql
 
 auth = Blueprint('auth', __name__)
 
@@ -48,6 +48,21 @@ def signup_post():
     db.session.commit()
 
     return redirect(url_for('auth.login'))
+
+@auth.route('/listuser')
+def listuser():
+
+    cur = mysql.connection.cursor()
+    
+    #cur.execute('''CREATE TABLE example (id INTEGER, name VARCHAR(20))''')
+    #cur.execute('''INSERT INTO example VALUES (1, 'Anthony')''')
+    #cur.execute('''INSERT INTO example VALUES (2, 'Billy')''')
+    #mysql.connection.commit()
+
+    cur.execute('''SELECT * FROM user''')
+    results = cur.fetchall()
+    #print(results)
+    return (results[0][1])
 
 @auth.route('/logout')
 @login_required
